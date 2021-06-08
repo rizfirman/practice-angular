@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-form',
@@ -10,16 +10,35 @@ export class FormComponent implements OnInit {
   input: Array<string> = [];
   sorting: boolean = false;
   sortColumn = 'name';
-  userForm = new FormGroup({
-    name: new FormControl('', Validators.required),
-    subject: new FormControl('', Validators.required),
-    email: new FormControl('', [Validators.required, Validators.email]),
-    message: new FormControl('', Validators.required),
-  });
+  userForm!: FormGroup;
+  buttonActive = false;
 
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {}
+  ContactForm() {
+    this.userForm = this.fb.group({
+      name: ['', Validators.required],
+      subject: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      message: ['', Validators.required],
+    });
+  }
+
+  ngOnInit(): void {
+    this.ContactForm();
+  }
+  get email() {
+    return this.userForm.get('email')!;
+  }
+  get name() {
+    return this.userForm.get('name')!;
+  }
+  get subject() {
+    return this.userForm.get('subject')!;
+  }
+  get message() {
+    return this.userForm.get('message')!;
+  }
 
   onSubmit() {
     console.log(this.input);

@@ -13,6 +13,9 @@
                 placeholder="Name"
                 formControlName="name"
               />
+              <small class="text-danger" *ngIf="name.invalid && name.touched"
+                >Name is required!</small
+              >
             </div>
 
             <div class="form-outline mb-4">
@@ -22,10 +25,22 @@
               <input
                 type="email"
                 id="form4Example2"
+                required
+                email
                 class="form-control"
                 placeholder="Email"
                 formControlName="email"
               />
+              <small
+                class="text-danger"
+                *ngIf="email.errors && email.errors.required && email.touched"
+                >email is required!</small
+              >
+              <small
+                class="text-danger"
+                *ngIf="email.errors && email.errors.email && email.touched"
+                >email is invalid!</small
+              >
             </div>
             <div class="form-outline mb-4">
               <label for="form4Example3">Subject</label>
@@ -36,6 +51,11 @@
                 placeholder="Subject"
                 formControlName="subject"
               />
+              <small
+                class="text-danger"
+                *ngIf="subject.invalid && subject.touched"
+                >Subject is required!</small
+              >
             </div>
 
             <div class="form-outline mb-4">
@@ -47,16 +67,28 @@
                 placeholder="Message"
                 formControlName="message"
               ></textarea>
+              <small
+                class="text-danger"
+                *ngIf="message.invalid && message.touched"
+                >Message is required!</small
+              >
             </div>
 
             <div class="d-flex justify-content-center">
-              <button
-                type="submit"
-                class="btn btn-primary mt-3"
-                [disabled]="!userForm.valid"
-              >
-                SUBMIT
-              </button>
+              <div *ngIf="!userForm.valid">
+                <button
+                  type="submit"
+                  class="btn btn-secondary mt-3"
+                  [disabled]="!userForm.valid"
+                >
+                  Please fill in the form above first
+                </button>
+              </div>
+              <div *ngIf="userForm.valid">
+                <button type="submit" class="btn btn-primary mt-3">
+                  SUBMIT
+                </button>
+              </div>
             </div>
           </form>
         </div>
