@@ -1,55 +1,50 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 
+import { MatDialog } from '@angular/material/dialog';
+import { FormDialogComponent } from './form-dialog/form-dialog.component';
+import { DataService } from '../service/data.service';
+
+interface Data {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
 })
 export class FormComponent implements OnInit {
-  input: Array<string> = [];
+  input: Data[] = [];
   sorting: boolean = false;
   sortColumn = 'name';
-  userForm!: FormGroup;
-  buttonActive = false;
+  buttonActive = true;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private dialog: MatDialog, private _dataService: DataService) {}
 
-  ContactForm() {
-    this.userForm = this.fb.group({
-      name: ['', Validators.required],
-      subject: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      message: ['', Validators.required],
+  ngOnInit(): void {}
+  get dataList() {
+    return this._dataService.getAllData();
+  }
+
+  addData(data: Data) {
+    this.input.push(data);
+  }
+  editMsg(name: string) {
+    this.buttonActive = false;
+    const edit = this._dataService
+      .getAllData()
+      .find((data) => data.name === name);
+    const dialogRef = this.dialog.open(FormDialogComponent, {
+      data: edit,
     });
   }
 
-  ngOnInit(): void {
-    this.ContactForm();
-  }
-  get email() {
-    return this.userForm.get('email')!;
-  }
-  get name() {
-    return this.userForm.get('name')!;
-  }
-  get subject() {
-    return this.userForm.get('subject')!;
-  }
-  get message() {
-    return this.userForm.get('message')!;
-  }
-
-  onSubmit() {
-    console.log(this.input);
-    this.input.push(this.userForm.value);
-    this.userForm.reset();
-    alert('Success!');
-  }
-  deleteMsg(index) {
+  deleteMsg(name: string) {
     let cnfrm = confirm('Are you sure?');
     if (cnfrm == true) {
-      this.input.splice(this.input.indexOf(index), 1);
+      this._dataService.deleteData(name);
     } else {
       false;
     }
@@ -59,6 +54,21 @@ export class FormComponent implements OnInit {
 
     this.sortColumn = column;
   }
+  openDialog() {
+    const dialogRef = this.dialog.open(FormDialogComponent, {
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
+  // onSubmit() {
+  //   console.log(this.input);
+  //   this.input.push(this.userForm.value);
+  //   this.userForm.reset();
+  //   alert('Success!');
+  // }
 
   // getSortClass(column) {
   //   if (this.sortColumn == column) {
